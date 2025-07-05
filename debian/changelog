@@ -1,3 +1,13 @@
+hypnotix (4.9.1) xia; urgency=medium
+
+  * Fork of version 4.9 from linuxmint/hypnotix
+  * Merged PR #375 from upstream
+  * Removed circle-flags-svg dependency
+  * Maintains volume between channels
+  * Other UI cleanups and startup improvements
+
+ -- hitch.fr <contact@hitch.fr>  Sat, 05 Jul 2025 21:45:00 +0200
+
 hypnotix (4.9) xia; urgency=medium
 
   * l10n: Update translations

@@ -1683,6 +1683,8 @@ class MainWindow:
             ytdl=True,
             wid=str(self.mpv_drawing_area.get_window().get_xid())
         )
+        self.mpv.volume = self.volume
+        self.mpv.observe_property("volume", self.on_volume_prop)
 
     def on_mpv_drawing_area_draw(self, widget, cr):
         cr.set_source_rgb(0.0, 0.0, 0.0)

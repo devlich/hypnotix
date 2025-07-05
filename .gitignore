@@ -1,6 +1,6 @@
-debian/hypnotix
+debian/hypnotix-for-debian
 debian/*debhelper*
 debian/files
-debian/hypnotix.substvars
+debian/hypnotix-for-debian.substvars
 usr/share/locale
 usr/share/hypnotix/hypnotix.ui~
