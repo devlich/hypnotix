@@ -135,7 +135,6 @@ class MainWindow:
         self.content_type = TV_GROUP  # content being browsed
         self.back_page = None  # page to go back to if the back button is pressed
         self.active_channel = None
-        self.inhibit_id = 0
         self.fullscreen = False
         self.latest_search_bar_text = None
         self.visible_search_results = 0
@@ -250,7 +249,6 @@ class MainWindow:
             "divider_label",
             "useragent_entry",
             "referer_entry",
-            "pm_inhibit_switch",
             "mpv_entry",
             "mpv_link",
             "ytdlp_local_switch",
@@ -346,7 +344,6 @@ class MainWindow:
         self.bind_setting_widget("user-agent", self.useragent_entry)
         self.bind_setting_widget("http-referer", self.referer_entry)
         self.bind_setting_widget("mpv-options", self.mpv_entry)
-        self.settings.bind("inhibit-pm", self.pm_inhibit_switch, "active", Gio.SettingsBindFlags.DEFAULT)
 
         # ytdlp
         self.ytdlp_local_switch.set_active(self.settings.get_boolean("use-local-ytdlp"))
@@ -503,9 +500,6 @@ class MainWindow:
                     self.add_flag(COUNTRY_CODES[country_name], box)
                     break
 
-            if not found_flag:
-                print(f"No flag found for: {group.name}")
-
             for word in name.split():
                 self.add_badge(word, box, added_words)
 
@@ -513,7 +507,7 @@ class MainWindow:
             box.set_spacing(6)
             button.add(box)
             self.categories_flowbox.add(button)
-            self.categories_flowbox.show_all()
+        self.categories_flowbox.show_all()
 
         if not found_groups:
             self.on_category_button_clicked(None, None)
@@ -716,6 +710,8 @@ class MainWindow:
         return surface
 
     def on_go_back_button(self, widget):
+        self.channels_listbox.set_filter_func(None)
+        self.channels_listbox.invalidate_filter()
         self.navigate_to(self.back_page)
         if self.active_channel is not None:
             self.playback_bar.show()
@@ -738,20 +734,9 @@ class MainWindow:
             GLib.timeout_add_seconds(0.1, self.on_search)
 
     def on_search(self):
-        def filter_func(child):
-            search_bar_text = unidecode(self.search_bar.get_text()).lower()
-            label_text = unidecode(child.get_children()[0].get_children()[0].get_children()[1].get_text()).lower()
-            if search_bar_text in label_text:
-                self.visible_search_results += 1
-                return True
-            else:
-                return False
-
         self.visible_search_results = 0
-        self.channels_listbox.set_filter_func(filter_func)
-        if not self.channels_listbox.get_children():
-            self.show_channels(self.active_provider.channels)
-        print("Filtering %d channel names containing the string '%s'..." % (len(self.channels_listbox.get_children()), self.latest_search_bar_text))
+        self.channels_listbox.invalidate_filter()
+        self.show_channels([channel for channel in self.active_provider.channels if self.latest_search_bar_text in channel.name.lower()])
         if self.visible_search_results == 0:
             self.status(_("No channels found"))
         else:
@@ -968,24 +953,6 @@ class MainWindow:
         self.mpv.observe_property("audio-codec", self.on_audio_codec)
         self.mpv.observe_property("video-bitrate", self.on_bitrate)
         self.mpv.observe_property("audio-bitrate", self.on_bitrate)
-        self.mpv.observe_property("core-idle", self.on_playback_changed)
-
-    @idle_function
-    def on_playback_changed(self, prop, idle):
-        if not self.settings.get_boolean("inhibit-pm"):
-            return GLib.SOURCE_REMOVE
-
-        if idle:
-            if self.inhibit_id != 0:
-                self.application.uninhibit(self.inhibit_id)
-                self.inhibit_id = 0
-        else:
-            if self.inhibit_id == 0:
-                self.inhibit_id = self.application.inhibit(
-                    self.window,
-                    Gtk.ApplicationInhibitFlags.IDLE | Gtk.ApplicationInhibitFlags.SUSPEND,
-                    "Playing media"
-                )
 
     @idle_function
     def on_bitrate(self, prop, bitrate):
@@ -1716,8 +1683,6 @@ class MainWindow:
             ytdl=True,
             wid=str(self.mpv_drawing_area.get_window().get_xid())
         )
-        self.mpv.volume = self.volume
-        self.mpv.observe_property("volume", self.on_volume_prop)
 
     def on_mpv_drawing_area_draw(self, widget, cr):
         cr.set_source_rgb(0.0, 0.0, 0.0)

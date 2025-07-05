@@ -4,8 +4,12 @@
 
 ## Differences with the original Hypnotix
 
-- Maintain volume between channels
-- removes circle-flags-svg dependency
+- Merged PR #375 from linuxmint/hypnotix:
+  - Removes unused code and assets
+  - Simplifies and cleans UI code
+  - Potentially improves startup performance by reducing asset loading
+- Removes the circle-flags-svg dependency
+- Maintains volume between channels
 ---
 
 Hypnotix is an IPTV streaming application with support for live TV, movies and series.
