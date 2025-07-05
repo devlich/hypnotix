@@ -1,11 +1,12 @@
-# Hypnotix
+# Hypnotix for Debian
+
+![build](https://github.com/linuxmint/hypnotix/actions/workflows/build.yml/badge.svg)
 
 ## Differences with the original Hypnotix
 
 - Maintain volume between channels
-
-
-![build](https://github.com/linuxmint/hypnotix/actions/workflows/build.yml/badge.svg)
+- removes circle-flags-svg dependency
+---
 
 Hypnotix is an IPTV streaming application with support for live TV, movies and series.
 
