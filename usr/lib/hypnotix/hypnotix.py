@@ -1523,6 +1523,12 @@ class MainWindow:
             self.on_prev_channel()
         elif event.keyval == Gdk.KEY_Right:
             self.on_next_channel()
+        elif event.keyval == Gdk.KEY_Up:
+            self.change_volume(increase=True)
+            return True
+        elif event.keyval == Gdk.KEY_Down:
+            self.change_volume(increase=False)
+            return True
         # elif event.keyval == Gdk.KEY_Up:
         #     # Up of in the list
         #     pass
@@ -1722,6 +1728,15 @@ class MainWindow:
 
     def on_volume_prop(self, name, value ):
         self.volume = value
+
+    def change_volume(self, increase=True):
+        if not self.mpv:
+            return
+        try:
+            delta = 5 if increase else -5
+            self.mpv.command("osd-msg-bar", "add", "volume", str(delta))
+        except Exception as e:
+            print(f"error while changing volume : {e}")
 
 if __name__ == "__main__":
     application = MyApplication("org.x.hypnotix", Gio.ApplicationFlags.FLAGS_NONE)
