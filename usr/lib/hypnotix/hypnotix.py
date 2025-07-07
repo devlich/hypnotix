@@ -879,15 +879,36 @@ class MainWindow:
         self.active_channel = widget.channel
         self.play_async(self.active_channel)
 
-    def on_prev_channel(self):
-        if self.stack.get_visible_child_name() == "channels_page":
-            self.channels_listbox.do_move_cursor(self.channels_listbox, Gtk.MovementStep.DISPLAY_LINES, -1)
-            self.channels_listbox.do_activate_cursor_row(self.channels_listbox)
+    def change_channel(self, index):
+        if self.stack.get_visible_child_name() != "channels_page":
+            return
 
-    def on_next_channel(self):
-        if self.stack.get_visible_child_name() == "channels_page":
-            self.channels_listbox.do_move_cursor(self.channels_listbox, Gtk.MovementStep.DISPLAY_LINES, 1)
-            self.channels_listbox.do_activate_cursor_row(self.channels_listbox)
+        rows = self.channels_listbox.get_children()
+        total = len(rows)
+        if total == 0:
+            return
+
+        # Clamp l'index dans les bornes valides
+        index = max(0, min(index, total - 1))
+
+        target = rows[index]
+        self.channels_listbox.select_row(target)
+        self.channels_listbox.emit("row-activated", target)
+
+    def increment_channel(self, step):
+        if self.stack.get_visible_child_name() != "channels_page":
+            return
+
+        rows = self.channels_listbox.get_children()
+        total = len(rows)
+        if total == 0:
+            return
+
+        current = self.channels_listbox.get_selected_row()
+        idx = current.get_index() if current else -1
+
+        new_idx = (idx + step) % total
+        self.change_channel(new_idx)
 
     @async_function
     def play_async(self, channel):
@@ -1520,9 +1541,9 @@ class MainWindow:
                 (self.fullscreen and event.keyval == Gdk.KEY_Escape):
             self.toggle_fullscreen()
         elif event.keyval == Gdk.KEY_Left:
-            self.on_prev_channel()
+            self.increment_channel(-1)
         elif event.keyval == Gdk.KEY_Right:
-            self.on_next_channel()
+            self.increment_channel(1)
         elif event.keyval == Gdk.KEY_Up:
             self.change_volume(increase=True)
             return True
