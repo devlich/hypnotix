@@ -925,6 +925,7 @@ class MainWindow:
 
     @idle_function
     def before_play(self, channel):
+        GLib.idle_add(self.scroll_to_active_channel)
         self.channel_stack.set_visible_child_name("channel_page")
         self.mpv_stack.set_visible_child_name("spinner_page")
         self.video_properties.clear()
@@ -1758,6 +1759,34 @@ class MainWindow:
             self.mpv.command("osd-msg-bar", "add", "volume", str(delta))
         except Exception as e:
             print(f"error while changing volume : {e}")
+
+    def scroll_to_active_channel(self):
+        channel = self.active_channel
+        group = self.active_group
+        listbox = self.channels_listbox
+
+        if not (channel and group and channel in group.channels):
+            return False
+
+        row = listbox.get_row_at_index(group.channels.index(channel))
+        if not row:
+            return False
+
+        listbox.select_row(row)
+
+        adjustment = listbox.get_adjustment()
+        if not adjustment:
+            return False
+
+        y = row.translate_coordinates(listbox, 0, 0)[1]
+        if y < 0:
+            return False
+
+        row_height = row.get_allocated_height()
+        center_y = y + row_height / 2 - adjustment.get_page_size() / 2
+        adjustment.set_value(max(0, center_y))
+
+        return False
 
 if __name__ == "__main__":
     application = MyApplication("org.x.hypnotix", Gio.ApplicationFlags.FLAGS_NONE)
