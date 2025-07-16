@@ -1,3 +1,14 @@
+htv (1.0) xia; urgency=medium
+
+  * mpv initialized only once
+  * show channel name on mpv player
+  * Bind Space key to pause/resume playback
+  * scroll to active channel
+  * refactor channel switching with index-based wrap-around
+  * volume control with up and down arrow keys
+
+ -- hitch.fr <contact@hitch.fr>  Wed, 16 Jul 2025 12:14:24 +0200
+
 hypnotix (4.9.1) xia; urgency=medium
 
   * Fork of version 4.9 from linuxmint/hypnotix

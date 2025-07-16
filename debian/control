@@ -1,4 +1,4 @@
-Source: hypnotix
+Source: htv
 Section: video
 Priority: optional
 Maintainer: hitch.fr <contact@hitch.fr>
@@ -6,7 +6,7 @@ Build-Depends: debhelper-compat (= 13)
 Standards-Version: 4.6.2
 Rules-Requires-Root: no
 
-Package: hypnotix-for-debian
+Package: htv
 Architecture: all
 Depends: gir1.2-xapp-1.0,
          python3,

@@ -1,6 +1,6 @@
-debian/hypnotix-for-debian
+debian/htv
 debian/*debhelper*
 debian/files
-debian/hypnotix-for-debian.substvars
+debian/htv.substvars
 usr/share/locale
-usr/share/hypnotix/hypnotix.ui~
+usr/share/htv/hypnotix.ui~

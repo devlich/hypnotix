@@ -1,15 +1,24 @@
-# Hypnotix for Debian
+# HTV
 
 ![build](https://github.com/linuxmint/hypnotix/actions/workflows/build.yml/badge.svg)
 
-## Differences with the original Hypnotix
+**HTV** is a lightweight and improved fork of [Hypnotix](https://github.com/linuxmint/hypnotix), the IPTV player originally developed by Linux Mint.
+This fork focuses on performance and usability improvements.
 
-- Merged PR #375 from linuxmint/hypnotix:
-  - Removes unused code and assets
-  - Simplifies and cleans UI code
-  - Potentially improves startup performance by reducing asset loading
-- Removes the circle-flags-svg dependency
-- Maintains volume between channels
+## Key Differences from the Original Hypnotix
+
+- MPV is initialized only once
+- Channel name is displayed as overlay text in the MPV player
+- **Press Space** to pause or resume playback
+- **Improved channel switching** with index-based wrap-around logic
+- **Control volume** with the Up/Down arrow keys
+- **Automatically scrolls to the active channel** in the list view
+- **Merged** [PR #375 from linuxmint/hypnotix](https://github.com/linuxmint/hypnotix/pull/375):
+  - Removed unused code and assets
+  - Simplified and cleaned up the UI code
+  - Potentially improved startup performance by reducing asset loading
+- **Removed** the `circle-flags-svg` dependency to avoid installation issues on Debian
+- **Volume is now preserved** when switching between channels
 ---
 
 Hypnotix is an IPTV streaming application with support for live TV, movies and series.

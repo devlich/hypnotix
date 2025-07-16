@@ -34,10 +34,10 @@ from common import Manager, Provider, Channel, MOVIES_GROUP, PROVIDERS_PATH, SER
     async_function, idle_function
 
 
-setproctitle.setproctitle("hypnotix")
+setproctitle.setproctitle("htv")
 
 # i18n
-APP = "hypnotix"
+APP = "htv"
 LOCALE_DIR = "/usr/share/locale"
 locale.bindtextdomain(APP, LOCALE_DIR)
 gettext.bindtextdomain(APP, LOCALE_DIR)
@@ -72,7 +72,7 @@ AUDIO_SAMPLE_FORMATS = {
 }
 
 COUNTRY_CODES = {}
-with open("/usr/share/hypnotix/countries.list") as f:
+with open("/usr/share/htv/countries.list") as f:
     for line in f:
         line = line.strip()
         code, name = line.split(":")
@@ -150,19 +150,19 @@ class MainWindow:
         # Used for redownloading timer
         self.reload_timeout_sec = 60 * 5
         self._timerid = -1
-        gladefile = "/usr/share/hypnotix/hypnotix.ui"
+        gladefile = "/usr/share/htv/hypnotix.ui"
         self.builder = Gtk.Builder()
         self.builder.set_translation_domain(APP)
         self.builder.add_from_file(gladefile)
         self.window = self.builder.get_object("main_window")
-        self.window.set_title(_("Hypnotix"))
+        self.window.set_title(_("HTV"))
         self.window.set_icon_name("hypnotix")
 
         # The window used to display stream information
         self.info_window = self.builder.get_object("stream_info_window")
 
         provider = Gtk.CssProvider()
-        provider.load_from_path("/usr/share/hypnotix/hypnotix.css")
+        provider.load_from_path("/usr/share/htv/hypnotix.css")
         screen = Gdk.Display.get_default_screen(Gdk.Display.get_default())
         # I was unable to found instrospected version of this
         Gtk.StyleContext.add_provider_for_screen(
@@ -410,9 +410,9 @@ class MainWindow:
         self.provider_type_combo.set_active(0)  # Select 1st type
         self.provider_type_combo.connect("changed", self.on_provider_type_combo_changed)
 
-        self.tv_logo.set_from_surface(self.get_surface_for_file("/usr/share/hypnotix/pictures/tv.svg", 258, 258))
-        self.movies_logo.set_from_surface(self.get_surface_for_file("/usr/share/hypnotix/pictures/movies.svg", 258, 258))
-        self.series_logo.set_from_surface(self.get_surface_for_file("/usr/share/hypnotix/pictures/series.svg", 258, 258))
+        self.tv_logo.set_from_surface(self.get_surface_for_file("/usr/share/htv/pictures/tv.svg", 258, 258))
+        self.movies_logo.set_from_surface(self.get_surface_for_file("/usr/share/htv/pictures/movies.svg", 258, 258))
+        self.series_logo.set_from_surface(self.get_surface_for_file("/usr/share/htv/pictures/series.svg", 258, 258))
 
         self.reload(page="landing_page")
 
@@ -458,7 +458,7 @@ class MainWindow:
     def add_badge(self, word, box, added_words):
         if word not in added_words:
             for extension in ["svg", "png"]:
-                path = "/usr/share/hypnotix/pictures/badges/%s.%s" % (word, extension)
+                path = "/usr/share/htv/pictures/badges/%s.%s" % (word, extension)
                 if os.path.exists(path):
                     try:
                         image = self.get_surf_based_image(path, -1, 32)
@@ -706,7 +706,7 @@ class MainWindow:
             else:
                 surface = self.get_surface_for_file(path, 200, 200)
         except Exception:
-            surface = self.get_surface_for_file("/usr/share/hypnotix/generic_tv_logo.png", 22, 22)
+            surface = self.get_surface_for_file("/usr/share/htv/generic_tv_logo.png", 22, 22)
         return surface
 
     def on_go_back_button(self, widget):
@@ -762,7 +762,7 @@ class MainWindow:
         provider = self.active_provider
         self.back_page = "landing_page"
         if page == "landing_page":
-            self.headerbar.set_title("Hypnotix")
+            self.headerbar.set_title("HTV")
             self.headerbar.set_subtitle(_("Watch TV"))
             if provider is None:
                 self.current_provider_label.set_text(_("No provider selected"))
@@ -853,7 +853,7 @@ class MainWindow:
             self.headerbar.set_subtitle(_("Reset providers"))
 
     def open_keyboard_shortcuts(self, widget):
-        gladefile = "/usr/share/hypnotix/shortcuts.ui"
+        gladefile = "/usr/share/htv/shortcuts.ui"
         builder = Gtk.Builder()
         builder.set_translation_domain(APP)
         builder.add_from_file(gladefile)

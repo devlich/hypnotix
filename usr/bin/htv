@@ -13,4 +13,4 @@ else
 	echo "System version of yt-dlp selected."
 fi
 
-/usr/lib/hypnotix/hypnotix.py &
+/usr/lib/htv/hypnotix.py &

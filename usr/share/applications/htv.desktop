@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Hypnotix
+Name=HTV
 Name[ar]=هيبنوتكس
 Name[eo]=TeleVidilo
 Name[he]=היפנוטיקס
@@ -63,8 +63,8 @@ Comment[uz]=TV ko‘rish
 Comment[vi]=Xem TV
 Comment[zh_CN]=观看电视
 Comment[zh_TW]=觀賞電視
-Exec=hypnotix
-Icon=hypnotix
+Exec=htv
+Icon=htv
 Terminal=false
 Type=Application
 Encoding=UTF-8
