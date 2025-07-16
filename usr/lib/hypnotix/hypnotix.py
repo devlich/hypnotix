@@ -1551,6 +1551,9 @@ class MainWindow:
         elif event.keyval == Gdk.KEY_Down:
             self.change_volume(increase=False)
             return True
+        elif event.keyval == Gdk.KEY_space:
+            self.on_pause_button(widget)
+            return True
         # elif event.keyval == Gdk.KEY_Up:
         #     # Up of in the list
         #     pass
