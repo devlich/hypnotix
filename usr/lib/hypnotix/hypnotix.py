@@ -918,9 +918,12 @@ class MainWindow:
             # self.mpv_drawing_area.show()
             self.info_menu_item.set_sensitive(False)
             self.before_play(channel)
-            self.reinit_mpv()
+
+            while self.mpv is None:
+                time.sleep(0.01)
+
             self.mpv_show_text(channel.name)
-            self.mpv.play(channel.url)
+            self.mpv.command("loadfile", channel.url, "replace", f"media-title={channel.name}")
             self.mpv.wait_until_playing()
             self.after_play(channel)
 
@@ -967,7 +970,6 @@ class MainWindow:
         elif self.content_type == SERIES_GROUP:
             self.get_imdb_details(self.active_serie.name)
         self.info_menu_item.set_sensitive(True)
-        self.monitor_playback()
 
     def monitor_playback(self):
         self.mpv.observe_property("video-params", self.on_video_params)
@@ -1717,6 +1719,7 @@ class MainWindow:
         )
         self.mpv.volume = self.volume
         self.mpv.observe_property("volume", self.on_volume_prop)
+        self.monitor_playback()
 
     def on_mpv_drawing_area_draw(self, widget, cr):
         cr.set_source_rgb(0.0, 0.0, 0.0)
