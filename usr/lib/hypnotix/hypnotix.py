@@ -919,6 +919,7 @@ class MainWindow:
             self.info_menu_item.set_sensitive(False)
             self.before_play(channel)
             self.reinit_mpv()
+            self.mpv_show_text(channel.name)
             self.mpv.play(channel.url)
             self.mpv.wait_until_playing()
             self.after_play(channel)
@@ -1790,6 +1791,19 @@ class MainWindow:
         adjustment.set_value(max(0, center_y))
 
         return False
+
+    def mpv_show_text(self, text):
+        size = '120'
+        border_size = '0.7'
+        self.mpv.command(
+            "expand-properties",
+            "show-text",
+            '${osd-ass-cc/0}{\\bord' + border_size +
+            '}{\\fscx' + size +
+            '}{\\fscy' + size +
+            '}{\\b1}{\\an5}${osd-ass-cc/1}' + text,
+            "3000"
+        )
 
 if __name__ == "__main__":
     application = MyApplication("org.x.hypnotix", Gio.ApplicationFlags.FLAGS_NONE)
