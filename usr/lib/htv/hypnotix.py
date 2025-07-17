@@ -542,8 +542,12 @@ class MainWindow:
         self.show_channels(channels, favorites=True)
 
     def show_channels(self, channels, favorites=False):
+
         self.navigate_to("channels_page", "", favorites)
         if self.content_type == TV_GROUP:
+            if self.mpv is None:
+                self.play_async( channels[0] )
+                # GLib.idle_add(self.toggle_fullscreen)
             self.sidebar.show()
             for child in self.channels_listbox.get_children():
                 self.channels_listbox.remove(child)
