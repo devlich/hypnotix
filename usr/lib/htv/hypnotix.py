@@ -140,6 +140,7 @@ class MainWindow:
         self.visible_search_results = 0
         self.mpv = None
         self.ia = IMDb()
+        self.sidebar_visible = True
 
         self.page_is_loading = False # used to ignore signals while we set widget states
 
@@ -1523,6 +1524,13 @@ class MainWindow:
     def on_menu_quit(self, widget):
         self.application.quit()
 
+    def toggle_sidebar_visibility(self):
+        self.sidebar_visible = not self.sidebar_visible
+        if not self.sidebar_visible:
+            self.sidebar.hide()
+        else:
+            self.sidebar.show()
+
     def on_key_press_event(self, widget, event):
         # Get any active, but not pressed modifiers, like CapsLock and NumLock
         persistant_modifiers = Gtk.accelerator_get_default_mod_mask()
@@ -1557,6 +1565,8 @@ class MainWindow:
         elif event.keyval == Gdk.KEY_space:
             self.on_pause_button(widget)
             return True
+        elif event.keyval == Gdk.KEY_s:
+            self.toggle_sidebar_visibility()
         # elif event.keyval == Gdk.KEY_Up:
         #     # Up of in the list
         #     pass
