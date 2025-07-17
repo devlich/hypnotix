@@ -1577,9 +1577,10 @@ class MainWindow:
         # elif event.keyval == Gdk.KEY_Down:
         #     # Down of in the list
         #     pass
-        # elif event.keyval == Gdk.KEY_Escape:
-        #    # Go back one level
-        #    pass
+        elif event.keyval == Gdk.KEY_BackSpace:
+           # Go back one level
+           self.on_go_back_button(widget)
+           pass
         # #elif event.keyval == Gdk.KEY_Return:
         #     # Same as click
         # #    pass
