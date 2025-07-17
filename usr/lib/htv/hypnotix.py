@@ -122,6 +122,9 @@ class MyApplication(Gtk.Application):
 class MainWindow:
     def __init__(self, application):
 
+        self.channel_digits = ""
+        self.channel_input_timeout = None
+
         self.application = application
         self.settings = Gio.Settings(schema_id="org.x.hypnotix")
         self.icon_theme = Gtk.IconTheme.get_default()
@@ -1584,6 +1587,29 @@ class MainWindow:
         # #elif event.keyval == Gdk.KEY_Return:
         #     # Same as click
         # #    pass
+        elif (Gdk.KEY_0 <= event.keyval <= Gdk.KEY_9) or (Gdk.KEY_KP_0 <= event.keyval <= Gdk.KEY_KP_9):
+            if Gdk.KEY_0 <= event.keyval <= Gdk.KEY_9:
+                digit = chr(event.keyval)
+            else:
+                digit = str(event.keyval - Gdk.KEY_KP_0)
+
+            self.channel_digits += digit
+
+            max_channels = len(self.channels_listbox.get_children())
+            max_digits = len(str(max_channels))
+
+            display = self.channel_digits + "_" * (max_digits - len(self.channel_digits))
+            self.mpv_show_text(display)
+
+            if len(self.channel_digits) >= max_digits:
+                self._validate_channel_input()
+            else:
+                # Restart timeout
+                if self.channel_input_timeout:
+                    GLib.source_remove(self.channel_input_timeout)
+                self.channel_input_timeout = GLib.timeout_add(1000, self.handle_channel_digits)
+
+            return True
 
     @async_function
     def reload(self, page=None, refresh=False):
@@ -1823,6 +1849,25 @@ class MainWindow:
             '}{\\b1}{\\an5}${osd-ass-cc/1}' + text,
             "3000"
         )
+
+    def handle_channel_digits(self):
+        if not self.channel_digits:
+            return False
+        try:
+            index = int(self.channel_digits) - 1
+        except ValueError:
+            index = -1
+
+        self.channel_digits = ""
+        self.channel_input_timeout = None
+        max_channels = len(self.channels_listbox.get_children())
+
+        if 0 <= index < max_channels:
+            self.change_channel(index)
+        else:
+            self.mpv_show_text(_("Invalid channel"))
+
+        return False
 
 if __name__ == "__main__":
     application = MyApplication("org.x.hypnotix", Gio.ApplicationFlags.FLAGS_NONE)
