@@ -1599,17 +1599,23 @@ class MainWindow:
             max_digits = len(str(max_channels))
 
             display = self.channel_digits + "_" * (max_digits - len(self.channel_digits))
-            self.mpv_show_text(display)
+            self.mpv_show_text(display, position="top-right")
 
             if len(self.channel_digits) >= max_digits:
-                self._validate_channel_input()
+                self.handle_channel_digits()
             else:
                 # Restart timeout
                 if self.channel_input_timeout:
                     GLib.source_remove(self.channel_input_timeout)
                 self.channel_input_timeout = GLib.timeout_add(1000, self.handle_channel_digits)
-
             return True
+        elif event.keyval == Gdk.KEY_Return:
+            if self.channel_digits:
+                if self.channel_input_timeout:
+                    GLib.source_remove(self.channel_input_timeout)
+                    self.channel_input_timeout = None
+                self.handle_channel_digits()
+                return True
 
     @async_function
     def reload(self, page=None, refresh=False):
@@ -1837,18 +1843,40 @@ class MainWindow:
 
         return False
 
-    def mpv_show_text(self, text):
+    def mpv_show_text(self, text, position=None):
         size = '120'
         border_size = '0.7'
-        self.mpv.command(
-            "expand-properties",
-            "show-text",
-            '${osd-ass-cc/0}{\\bord' + border_size +
-            '}{\\fscx' + size +
-            '}{\\fscy' + size +
-            '}{\\b1}{\\an5}${osd-ass-cc/1}' + text,
-            "3000"
+
+        # Mapping text positions to mpv's ASS alignment codes
+        alignment_map = {
+            "top-left": 7,
+            "top-center": 8,
+            "top-right": 9,
+            "center-left": 4,
+            "center": 5,
+            "center-right": 6,
+            "bottom-left": 1,
+            "bottom-center": 2,
+            "bottom-right": 3
+        }
+
+        # Default to center if no position is given
+        alignment = 5  # ASS \an5 is center
+        if position:
+            alignment = alignment_map.get(position.lower(), 5)
+
+        # Construct ASS-formatted text
+        formatted_text = (
+            f'${{osd-ass-cc/0}}{{\\bord{border_size}}}'
+            f'{{\\fscx{size}}}{{\\fscy{size}}}'
+            f'{{\\b1}}{{\\an{alignment}}}${{osd-ass-cc/1}}{text}'
         )
+
+        try:
+            self.mpv.command("expand-properties", "show-text", formatted_text, "3000")
+        except Exception as e:
+            print(f"[WARN] Failed to show OSD text: {e}")
+
 
     def handle_channel_digits(self):
         if not self.channel_digits:
