@@ -984,6 +984,8 @@ class MainWindow:
         elif self.content_type == SERIES_GROUP:
             self.get_imdb_details(self.active_serie.name)
         self.info_menu_item.set_sensitive(True)
+        self.mpv_drawing_area.set_can_focus(True)
+        self.mpv_drawing_area.grab_focus()
 
     def monitor_playback(self):
         self.mpv.observe_property("video-params", self.on_video_params)
@@ -1545,7 +1547,8 @@ class MainWindow:
             self.sidebar.show()
 
     def on_key_press_event(self, widget, event):
-        if self.mpv_stack.get_visible_child_name() != "player_page":
+
+        if not self.mpv_drawing_area.has_focus():
             return False
 
         focus_widget = widget.get_focus()
@@ -1613,7 +1616,6 @@ class MainWindow:
                 return True
 
         return False
-
 
     @async_function
     def reload(self, page=None, refresh=False):
@@ -1897,7 +1899,6 @@ class MainWindow:
         return False
 
     def on_mouse_motion(self, name, value):
-        print("On mouse motion")
         self.show_mouse_cursor()
         if hasattr(self, 'inactivity_timer') and self.inactivity_timer:
             GLib.source_remove(self.inactivity_timer)
