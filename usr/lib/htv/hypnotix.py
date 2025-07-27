@@ -949,7 +949,6 @@ class MainWindow:
     def before_play(self, channel):
         GLib.idle_add(self.scroll_to_active_channel)
         self.channel_stack.set_visible_child_name("channel_page")
-        self.mpv_stack.set_visible_child_name("spinner_page")
         self.video_properties.clear()
         self.video_properties[_("General")] = {}
         self.video_properties[_("Color")] = {}
@@ -960,7 +959,6 @@ class MainWindow:
 
         self.video_bitrates.clear()
         self.audio_bitrates.clear()
-        self.spinner.start()
 
         self.label_channel_name.set_text(channel.name)
         self.label_channel_url.set_text(channel.url)
@@ -980,7 +978,6 @@ class MainWindow:
     @idle_function
     def after_play(self, channel):
         self.mpv_stack.set_visible_child_name("player_page")
-        self.spinner.stop()
         self.playback_label.set_text(channel.name)
         self.info_revealer.set_reveal_child(False)
         if self.content_type == MOVIES_GROUP:
@@ -1778,6 +1775,8 @@ class MainWindow:
         self.mpv.volume = self.volume
         self.mpv.observe_property("volume", self.on_volume_prop)
         self.monitor_playback()
+        self.mpv_stack.set_visible_child_name("spinner_page")
+        self.spinner.start()
 
     def on_mpv_drawing_area_draw(self, widget, cr):
         cr.set_source_rgb(0.0, 0.0, 0.0)
