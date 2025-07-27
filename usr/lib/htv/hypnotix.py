@@ -1769,6 +1769,7 @@ class MainWindow:
         self.monitor_playback()
         self.mpv_stack.set_visible_child_name("spinner_page")
         self.spinner.start()
+        self.mpv.observe_property("mouse-pos", self.on_mouse_motion)
 
     def on_mpv_drawing_area_draw(self, widget, cr):
         cr.set_source_rgb(0.0, 0.0, 0.0)
@@ -1897,6 +1898,38 @@ class MainWindow:
             self.mpv_show_text(_("Invalid channel"))
 
         return False
+
+    def on_mouse_motion(self, name, value):
+        print("On mouse motion")
+        self.show_mouse_cursor()
+        if hasattr(self, 'inactivity_timer') and self.inactivity_timer:
+            GLib.source_remove(self.inactivity_timer)
+            self.inactivity_timer = None
+        self.inactivity_timer = GLib.timeout_add_seconds(2, self.on_mouse_inactive)
+
+    def on_mouse_inactive(self):
+        if self.mpv and self.fullscreen:
+            self.hide_mouse_cursor()
+            self.inactivity_timer = None
+        return False
+
+    def hide_mouse_cursor(self):
+        display = Gdk.Display.get_default()
+        if not display:
+            return
+        cursor = Gdk.Cursor.new_from_name(display, "none")
+        win = self.mpv_drawing_area.get_window()
+        if win:
+            win.set_cursor(cursor)
+
+    def show_mouse_cursor(self):
+        display = Gdk.Display.get_default()
+        if not display:
+            return
+        cursor = Gdk.Cursor.new_from_name(display, "default")
+        win = self.mpv_drawing_area.get_window()
+        if win:
+            win.set_cursor(cursor)
 
 if __name__ == "__main__":
     application = MyApplication("fr.hitch.htv", Gio.ApplicationFlags.FLAGS_NONE)
