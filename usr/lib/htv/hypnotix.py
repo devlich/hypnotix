@@ -204,7 +204,6 @@ class MainWindow:
             "channel_stack",
             "fullscreen_button",
             "mpv_top_box",
-            "mpv_bottom_box",
             "label_channel_name",
             "label_channel_url",
             "provider_ok_button",
@@ -1783,7 +1782,6 @@ class MainWindow:
                 # Fullscreen mode
                 self.window.fullscreen()
                 self.mpv_top_box.hide()
-                self.mpv_bottom_box.hide()
                 self.sidebar.hide()
                 self.headerbar.hide()
                 self.status_label.hide()
@@ -1793,7 +1791,6 @@ class MainWindow:
                 # Normal mode
                 self.window.unfullscreen()
                 self.mpv_top_box.show()
-                self.mpv_bottom_box.hide()
                 if self.content_type == TV_GROUP:
                     self.sidebar.show()
                 self.headerbar.show()
