@@ -1546,25 +1546,26 @@ class MainWindow:
             self.sidebar.show()
 
     def on_key_press_event(self, widget, event):
-        # Get any active, but not pressed modifiers, like CapsLock and NumLock
-        persistant_modifiers = Gtk.accelerator_get_default_mod_mask()
+        if self.mpv_stack.get_visible_child_name() != "player_page":
+            return False
 
-        # Determine the actively pressed modifier
+        focus_widget = widget.get_focus()
+        if isinstance(focus_widget, (Gtk.Entry, Gtk.SearchEntry)):
+            return False
+
+        # Get active modifiers (CTRL, SHIFT)
+        persistant_modifiers = Gtk.accelerator_get_default_mod_mask()
         modifier = event.get_state() & persistant_modifiers
-        # Bool of Control or Shift modifier states
         ctrl = modifier == Gdk.ModifierType.CONTROL_MASK
         shift = modifier == Gdk.ModifierType.SHIFT_MASK
 
         if ctrl and event.keyval == Gdk.KEY_r:
             self.reload(page=None, refresh=True)
         elif ctrl and event.keyval == Gdk.KEY_f:
-            if self.search_button.get_active():
-                self.search_button.set_active(False)
-            else:
-                self.search_button.set_active(True)
+            self.search_button.set_active(not self.search_button.get_active())
         elif event.keyval == Gdk.KEY_F11 or \
-                (event.keyval == Gdk.KEY_f and not ctrl and type(widget.get_focus()) != gi.repository.Gtk.SearchEntry) or \
-                (self.fullscreen and event.keyval == Gdk.KEY_Escape):
+             (event.keyval == Gdk.KEY_f and not ctrl) or \
+             (self.fullscreen and event.keyval == Gdk.KEY_Escape):
             self.toggle_fullscreen()
         elif event.keyval == Gdk.KEY_Left:
             self.increment_channel(-1)
@@ -1581,25 +1582,14 @@ class MainWindow:
             return True
         elif event.keyval == Gdk.KEY_s:
             self.toggle_sidebar_visibility()
-        # elif event.keyval == Gdk.KEY_Up:
-        #     # Up of in the list
-        #     pass
-        # elif event.keyval == Gdk.KEY_Down:
-        #     # Down of in the list
-        #     pass
         elif event.keyval == Gdk.KEY_BackSpace:
-           # Go back one level
-           self.on_go_back_button(widget)
-           pass
-        # #elif event.keyval == Gdk.KEY_Return:
-        #     # Same as click
-        # #    pass
+            self.on_go_back_button(widget)
         elif (Gdk.KEY_0 <= event.keyval <= Gdk.KEY_9) or (Gdk.KEY_KP_0 <= event.keyval <= Gdk.KEY_KP_9):
-            if Gdk.KEY_0 <= event.keyval <= Gdk.KEY_9:
-                digit = chr(event.keyval)
-            else:
-                digit = str(event.keyval - Gdk.KEY_KP_0)
-
+            digit = (
+                chr(event.keyval)
+                if Gdk.KEY_0 <= event.keyval <= Gdk.KEY_9
+                else str(event.keyval - Gdk.KEY_KP_0)
+            )
             self.channel_digits += digit
 
             max_channels = len(self.channels_listbox.get_children())
@@ -1611,7 +1601,6 @@ class MainWindow:
             if len(self.channel_digits) >= max_digits:
                 self.handle_channel_digits()
             else:
-                # Restart timeout
                 if self.channel_input_timeout:
                     GLib.source_remove(self.channel_input_timeout)
                 self.channel_input_timeout = GLib.timeout_add(1000, self.handle_channel_digits)
@@ -1623,6 +1612,9 @@ class MainWindow:
                     self.channel_input_timeout = None
                 self.handle_channel_digits()
                 return True
+
+        return False
+
 
     @async_function
     def reload(self, page=None, refresh=False):
