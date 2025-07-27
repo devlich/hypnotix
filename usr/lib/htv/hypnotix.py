@@ -1605,7 +1605,7 @@ class MainWindow:
                     GLib.source_remove(self.channel_input_timeout)
                 self.channel_input_timeout = GLib.timeout_add(1000, self.handle_channel_digits)
             return True
-        elif event.keyval == Gdk.KEY_Return:
+        elif event.keyval in (Gdk.KEY_Return, Gdk.KEY_KP_Enter):
             if self.channel_digits:
                 if self.channel_input_timeout:
                     GLib.source_remove(self.channel_input_timeout)
