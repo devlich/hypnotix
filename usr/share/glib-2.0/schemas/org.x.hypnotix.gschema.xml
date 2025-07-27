@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="org.x.hypnotix" path="/org/x/hypnotix/">
+  <schema id="fr.hitch.htv" path="/fr/hitch/htv/">
     <key type="s" name="mpv-options">
       <default>"hwdec=auto-safe"</default>
       <summary></summary>

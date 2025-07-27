@@ -136,7 +136,7 @@ class MainWindow:
         self.channel_input_timeout = None
 
         self.application = application
-        self.settings = Gio.Settings(schema_id="org.x.hypnotix")
+        self.settings = Gio.Settings(schema_id="fr.hitch.htv")
         self.icon_theme = Gtk.IconTheme.get_default()
         self.manager = Manager(self.settings)
         self.providers = []
@@ -1907,5 +1907,5 @@ class MainWindow:
         return False
 
 if __name__ == "__main__":
-    application = MyApplication("org.x.hypnotix", Gio.ApplicationFlags.FLAGS_NONE)
+    application = MyApplication("fr.hitch.htv", Gio.ApplicationFlags.FLAGS_NONE)
     application.run()
