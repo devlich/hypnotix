@@ -1359,7 +1359,7 @@ function render_elements(master_ass)
 	-- when the slider is dragged or hovered and we have a target chapter name
 	-- then we use it instead of the normal title. we calculate it before the
 	-- render iterations because the title may be rendered before the slider.
-	state.forced_title = nil
+	state.forced_title = mp.get_property("media-title")
 	local se, ae = state.slider_element, elements[state.active_element]
 	if user_opts.chapter_fmt ~= "no" and se and (ae == se or (not ae and mouse_hit(se)))
 		and user_opts.showChapters then
