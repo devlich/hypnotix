@@ -170,7 +170,7 @@ class MainWindow:
         self.builder.add_from_file(gladefile)
         self.window = self.builder.get_object("main_window")
         self.window.set_title(_("HTV"))
-        self.window.set_icon_name("hypnotix")
+        self.window.set_icon_name("htv")
 
         # The window used to display stream information
         self.info_window = self.builder.get_object("stream_info_window")
