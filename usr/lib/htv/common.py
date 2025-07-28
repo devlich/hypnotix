@@ -294,6 +294,8 @@ class Manager:
 
     def load_favorites(self):
         favorites = []
+        if not os.path.exists(FAVORITES_PATH):
+            return favorites
         with open(FAVORITES_PATH, 'r', encoding="utf-8", errors="ignore") as f:
             for line in f:
                 favorites.append(line.strip())
