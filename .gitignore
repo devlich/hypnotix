@@ -4,3 +4,4 @@ debian/files
 debian/htv.substvars
 usr/share/locale
 usr/share/htv/hypnotix.ui~
+usr/lib/htv/mpv/.lab/

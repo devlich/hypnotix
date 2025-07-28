@@ -1761,7 +1761,7 @@ class MainWindow:
             script_opts="osc-layout=box,osc-seekbarstyle=bar,osc-deadzonesize=0,osc-minmousemove=3",
             input_default_bindings=True,
             input_vo_keyboard=True,
-            osc=osc,
+            osc=False,
             ytdl=True,
             wid=str(self.mpv_drawing_area.get_window().get_xid())
         )
@@ -1771,6 +1771,9 @@ class MainWindow:
         self.mpv_stack.set_visible_child_name("spinner_page")
         self.spinner.start()
         self.mpv.observe_property("mouse-pos", self.on_mouse_motion)
+
+        osc = os.path.join(os.path.dirname(__file__), "mpv/osc/osc.lua")
+        self.mpv.command("load-script", osc)
 
     def on_mpv_drawing_area_draw(self, widget, cr):
         cr.set_source_rgb(0.0, 0.0, 0.0)
