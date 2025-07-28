@@ -1761,7 +1761,10 @@ class MainWindow:
             script_opts="osc-layout=box,osc-seekbarstyle=bar,osc-deadzonesize=0,osc-minmousemove=3",
             input_default_bindings=True,
             input_vo_keyboard=True,
+            # osc=osc,
             osc=False,
+            # log_handler=print,
+            # loglevel="debug",
             ytdl=True,
             wid=str(self.mpv_drawing_area.get_window().get_xid())
         )
@@ -1774,32 +1777,34 @@ class MainWindow:
 
         osc = os.path.join(os.path.dirname(__file__), "mpv/osc/osc.lua")
         self.mpv.command("load-script", osc)
+        self.mpv.observe_property("fullscreen", self.on_mpv_fullscreen_change)
 
     def on_mpv_drawing_area_draw(self, widget, cr):
         cr.set_source_rgb(0.0, 0.0, 0.0)
         cr.paint()
 
+    def on_mpv_fullscreen_change(self, name, value):
+        if value is None:
+            return
+        self.fullscreen = value
+        if value:
+            self.window.fullscreen()
+            self.mpv_top_box.hide()
+            self.sidebar.hide()
+            self.headerbar.hide()
+            self.status_label.hide()
+            self.info_revealer.set_reveal_child(False)
+            self.channels_box.set_border_width(0)
+        else:
+            self.window.unfullscreen()
+            self.mpv_top_box.show()
+            if self.content_type == TV_GROUP:
+                self.sidebar.show()
+            self.headerbar.show()
+            self.channels_box.set_border_width(12)
+
     def toggle_fullscreen(self):
-        if self.stack.get_visible_child_name() == "channels_page":
-            # Toggle state
-            self.fullscreen = not self.fullscreen
-            if self.fullscreen:
-                # Fullscreen mode
-                self.window.fullscreen()
-                self.mpv_top_box.hide()
-                self.sidebar.hide()
-                self.headerbar.hide()
-                self.status_label.hide()
-                self.info_revealer.set_reveal_child(False)
-                self.channels_box.set_border_width(0)
-            else:
-                # Normal mode
-                self.window.unfullscreen()
-                self.mpv_top_box.show()
-                if self.content_type == TV_GROUP:
-                    self.sidebar.show()
-                self.headerbar.show()
-                self.channels_box.set_border_width(12)
+        self.mpv.command('cycle', 'fullscreen')
 
     def on_fullscreen_button_clicked(self, widget):
         self.toggle_fullscreen()
