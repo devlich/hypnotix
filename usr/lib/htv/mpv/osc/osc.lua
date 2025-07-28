@@ -30,7 +30,7 @@ local user_opts = {
 	seekbarkeyframes = true,			-- use keyframes when dragging the seekbar
 	hidetimeout = 0,					-- duration in ms until the OSC hides (case "don't show on mouse move")
 	fadeduration = 0,					-- duration of fade out in ms, 0 = no fade (case "don't show on mouse move")
-	hidetimeoutMouseMove = 1000,		-- duration in ms until the OSC hides (case "show on mouse move")
+	hidetimeoutMouseMove = 2000,		-- duration in ms until the OSC hides (case "show on mouse move")
 	fadedurationMouseMove = 500,		-- duration of fade out in ms, 0 = no fade (case "show on mouse move")
 	minmousemove = -1,					-- min amount of pixels for OSC to show up (Don't show < 0, show >= 0)
 	layout = "modernx",					-- set thumbnail layout
@@ -53,14 +53,14 @@ local user_opts = {
 
 	-- tog4in1
 
-	modernTog = true,					-- Default UI (true) or PotPlayer-like UI (false)
+	modernTog = false,					-- Default UI (true) or PotPlayer-like UI (false)
 	minimalUI = false,					-- Minimal UI (chapters disabled)
 	UIAllWhite = false,					-- UI all white (no grey buttons / text)
 	saveFile = true,					-- Minimal UI (chapters disabled)
 	minimalSeekY = 30,					-- Height minimal UI
 	jumpValue = 5,						-- Default jump value in s (From OSC only)
 	smallIcon = 20,						-- Dimensions in px of small icons
-	seekbarColorIndex = 4,				-- Default OSC seekbar color (osc_palette)
+	seekbarColorIndex = 2,				-- Default OSC seekbar color (osc_palette)
 	seekbarHeight = 0,					-- seekbar height offset
 	seekbarBgHeight = true,				-- seekbar background height follow seekbar height
 	bgBarAlpha = 220,					-- seekbar background opacity
@@ -73,8 +73,8 @@ local user_opts = {
 	showIcons = true,					-- show extra buttons
 	onTopWhilePlaying = true, 			-- Toggle On top while playing
 	oscMode = "default",				-- Toggle OSC Modes default / onpause / always
-	heightoscShowHidearea = 120,		-- Height show / hide osc area
-	heightwcShowHidearea = 30,			-- Height show / hide window controls area
+	heightoscShowHidearea = 0,		-- Height show / hide osc area
+	heightwcShowHidearea = 0,			-- Height show / hide window controls area
 	visibleButtonsW = 300,				-- Max width for bottom OSC side buttons visible
 }
 
@@ -523,8 +523,14 @@ end)
 -------------
 
 --https://github.com/mpv-player/mpv/issues/3201#issuecomment-2016505146
+local config_dir = mp.command_native({"expand-path", "~~/.config/htv"})
+local saveParamsFile = utils.join_path(config_dir, "osc.ini")
 
-local saveParamsFile = mp.command_native({"expand-path", "~~/saveparams.ini"})
+local stat = utils.file_info(config_dir)
+if not stat or not stat.is_dir then
+    os.execute('mkdir -p "' .. config_dir .. '"')
+end
+-- local saveParamsFile = mp.command_native({"expand-path", "~~/saveparams.ini"})
 local savefile
 
 local function save_file()
@@ -747,7 +753,7 @@ local alignments = {
 -- osc colors : seekbar / hover (BGR > ABCDEF becomes EFCDAB)
 local osc_palette = {
 	[1] 	= "7f7f00", -- cyan
-	[2]		= "E39C42", -- blue
+	[2]		= "FFBF3D", -- hypnotix blue
 	[3]		= "23a08e", -- green apple
 	[4]		= "859b2f", -- green
 	[5]		= "38b3ce", -- yellow past
