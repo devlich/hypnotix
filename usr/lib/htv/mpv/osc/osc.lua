@@ -69,7 +69,7 @@ local user_opts = {
 	showThumbfast = true,				-- Toggle Thumbfast
 	showTooltip = true,					-- Toggle Tooltips
 	showChapters = false, 				-- Toggle chapters on / off
-	showTitle = false,					-- show title in OSC
+	showTitle = true,					-- show title in OSC
 	showIcons = true,					-- show extra buttons
 	onTopWhilePlaying = true, 			-- Toggle On top while playing
 	oscMode = "default",				-- Toggle OSC Modes default / onpause / always
@@ -2110,22 +2110,22 @@ function layout()
 	lo.style = osc_styles.mediumButtonsBig
 
 	-- Audio tracks
-	lo = add_layout("cy_audio")
-	if minimalUI then
-		lo.geometry = {x = refX - xMinimalIcons - oscY - 5, y = refY - oscY + yMinimalIcons, an = 5, w = smallIconS, h = smallIconS}
-	else
-		lo.geometry = {x = 60, y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-	end
-	lo.style = osc_styles.togIcon
+	-- lo = add_layout("cy_audio")
+	-- if minimalUI then
+	-- 	lo.geometry = {x = refX - xMinimalIcons - oscY - 5, y = refY - oscY + yMinimalIcons, an = 5, w = smallIconS, h = smallIconS}
+	-- else
+	-- 	lo.geometry = {x = 60, y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
+	-- end
+	-- lo.style = osc_styles.togIcon
 
 	-- Subtitle tracks
-	lo = add_layout("cy_sub")
-	if minimalUI then
-		lo.geometry = {x = refX + xMinimalIcons + oscY + 5, y = refY - oscY + yMinimalIcons, an = 5, w = smallIconS, h = smallIconS}
-	else
-		lo.geometry = {x = 85, y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-	end
-	lo.style = osc_styles.togIcon
+	-- lo = add_layout("cy_sub")
+	-- if minimalUI then
+	-- 	lo.geometry = {x = refX + xMinimalIcons + oscY + 5, y = refY - oscY + yMinimalIcons, an = 5, w = smallIconS, h = smallIconS}
+	-- else
+	-- 	lo.geometry = {x = 85, y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
+	-- end
+	-- lo.style = osc_styles.togIcon
 
 	-- If not minimal UI all other buttons
 	if not minimalUI then
@@ -2210,9 +2210,9 @@ function layout()
 			lo.style = osc_styles.togIcon
 
 			-- Toggle on top
-			lo = add_layout("tog_ontop")
-			lo.geometry = {x = osc_geo.w - 110, y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-			lo.style = osc_styles.togIcon
+			-- lo = add_layout("tog_ontop")
+			-- lo.geometry = {x = osc_geo.w - 110, y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
+			-- lo.style = osc_styles.togIcon
 
 		end
 
@@ -2384,7 +2384,6 @@ function layoutPot()
 	end
 
 	-- Timecodes
-
 	lo = add_layout("tc_left")
 	if user_opts.showChapters and not minimalUI then
 		lo.geometry = {x = potRefX + (5 * gapNavButton), y = refY - oscY + 1, an = 4, w = 50, h = smallIconS}
@@ -2410,104 +2409,45 @@ function layoutPot()
 	end
 	lo.style = osc_styles.timecodeR
 
-	-- Toggle Ontop
-	lo = add_layout("tog_ontop")
-	if minimalUI then
-		lo.geometry = {x = osc_geo.w - (3 * gapNavButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-	else
-		lo.geometry = {x = osc_geo.w - (6 * gapSmallButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-	end
-	lo.style = osc_styles.togIcon
 
-	-- Audio / Subs
+	local icon_elements = {
+		{ name = "tog_fs",         style = osc_styles.togIconBig, cond = user_opts.showIcons and not minimalUI },
+		-- { name = "tog_info",       style = osc_styles.togIconBig, cond = user_opts.showIcons },
+		-- { name = "cy_sub",   style = osc_styles.togIcon },
+		-- { name = "cy_audio", style = osc_styles.togIcon },
+		{ name = "tog_ui",         style = osc_styles.togIcon,    cond = user_opts.showIcons and not minimalUI },
+		{ name = "volume",         style = osc_styles.togIcon,    cond = user_opts.showIcons and not minimalUI },
+		{ name = "tog_ontop",      style = osc_styles.togIcon,    cond = user_opts.showIcons and (osc_param.playresx >= user_opts.visibleButtonsW) and not minimalUI },
+		{ name = "tog_oscmode",    style = osc_styles.togIcon,    cond = user_opts.showIcons and not minimalUI },
+		{ name = "tog_thumb",      style = osc_styles.togIcon,    cond = user_opts.showIcons and not minimalUI },
+		{ name = "tog_loop",       style = osc_styles.togIcon,    cond = user_opts.showIcons and not minimalUI },
+		{ name = "tog_tooltip",    style = osc_styles.togIcon,    cond = user_opts.showIcons and not minimalUI },
+		{ name = "playback_speed", style = osc_styles.speedButton, cond = user_opts.showIcons and not minimalUI },
+		-- { name = "cache",          style = osc_styles.speedButton, cond = user_opts.showIcons and user_opts.showCache },
+		{ gap = 5 },
+		{ name = "title",          style = osc_styles.titlePotMini, cond = not minimalUI },
+	}
 
-	lo = add_layout("cy_audio")
-	if minimalUI then
-		lo.geometry = {x = osc_geo.w - (2 * gapNavButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-	else
-		lo.geometry = {x = osc_geo.w - (5 * gapSmallButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-	end
-	lo.style = osc_styles.togIcon
 
-	lo = add_layout("cy_sub")
-	if minimalUI then
-		lo.geometry = {x = osc_geo.w - gapNavButton, y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-	else
-		lo.geometry = {x = osc_geo.w - (4 * gapSmallButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-	end
-	lo.style = osc_styles.togIcon
-
-	-- If minimal UI disabled : add other buttons
-
-	if not minimalUI then
-
-		-- Title
-		lo = add_layout("title")
-		lo.geometry = {x = potRefX + offsetSeekbarLeft, y = refY - oscY + 1, an = 4, w = seekbarWidth, h = smallIconS}
-		lo.style = osc_styles.titlePotMini
-		lo.alpha[3] = 0
-		lo.button.maxchars = 75
-		if ((not user_opts.vidscale and not state.fullscreen) or not state.fullscreen) then
-			lo.button.maxchars = 50
-		end
-
-		if user_opts.showIcons then
-
-			-- Cache
-			if user_opts.showCache then
-				lo = add_layout("cache")
-				lo.geometry = {x = osc_geo.w - (14 * gapSmallButton) - 5, y = refY - oscY - 1, an = 5, w = smallIconS, h = smallIconS}
-				lo.style = osc_styles.speedButton
+	local index = 0
+	for _, el in ipairs(icon_elements) do
+			if el.gap then
+					index = index + el.gap
+			elseif el.cond == nil or el.cond then
+					index = index + 1
+					local lo = add_layout(el.name)
+					lo.geometry = {
+							x = osc_geo.w - (index * gapSmallButton) - 5,
+							y = refY - oscY + ((el.name == "tog_oscmode" or el.name == "cache") and -1 or 0),
+							an = 5,
+							w = smallIconS,
+							h = smallIconS
+					}
+					lo.style = el.style
 			end
-
-			-- Playback speed
-			lo = add_layout("playback_speed")
-			lo.geometry = {x = osc_geo.w - (12 * gapSmallButton) - 5, y = refY - oscY + 1, an = 5, w = smallIconS, h = smallIconS}
-			lo.style = osc_styles.speedButton
-
-			-- Toggle tooltip
-			lo = add_layout("tog_tooltip")
-			lo.geometry = {x = osc_geo.w - (11 * gapSmallButton), y = refY - oscY + 1, an = 5, w = smallIconS, h = smallIconS}
-			lo.style = osc_styles.togIcon
-
-			-- Toggle loop
-			lo = add_layout("tog_loop")
-			lo.geometry = {x = osc_geo.w - (10 * gapSmallButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-			lo.style = osc_styles.togIcon
-
-			-- Toggle thumbfast
-			lo = add_layout("tog_thumb")
-			lo.geometry = {x = osc_geo.w - (9 * gapSmallButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-			lo.style = osc_styles.togIcon
-
-			-- Toggle OSC mode
-			lo = add_layout("tog_oscmode")
-			lo.geometry = {x = osc_geo.w - (8 * gapSmallButton), y = refY - oscY - 1, an = 5, w = smallIconS, h = smallIconS}
-			lo.style = osc_styles.togIcon
-
-			-- Volume
-			lo = add_layout("volume")
-			lo.geometry = {x = osc_geo.w - (7 * gapSmallButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-			lo.style = osc_styles.togIcon
-
-		end
-
-		-- Toggle info
-		lo = add_layout("tog_ui")
-		lo.geometry = {x = osc_geo.w - (3 * gapSmallButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-		lo.style = osc_styles.togIcon
-
-		-- Toggle info
-		lo = add_layout("tog_info")
-		lo.geometry = {x = osc_geo.w - (2 * gapSmallButton), y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-		lo.style = osc_styles.togIconBig
-
-		-- Toggle fullscreen
-		lo = add_layout("tog_fs")
-		lo.geometry = {x = osc_geo.w - gapSmallButton, y = refY - oscY, an = 5, w = smallIconS, h = smallIconS}
-		lo.style = osc_styles.togIconBig
-
 	end
+
+
 end
 
 -- Validate string type user options
