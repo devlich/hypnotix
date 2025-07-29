@@ -1622,13 +1622,16 @@ class MainWindow:
         self.favorite_data = self.manager.load_favorites()
         self.status(_("Loading providers..."))
         self.providers = []
+        active_provider_name = self.settings.get_string("active-provider")
         for provider_info in self.settings.get_strv("providers"):
             try:
                 provider = Provider(name=None, provider_info=provider_info)
+                self.providers.append(provider)
 
                 # Add provider to list. This must be done so that it shows up in the
                 # list of providers for editing.
-                self.providers.append(provider)
+                if provider.name != active_provider_name:
+                    continue
 
                 if provider.type_id != "xtream":
                     # Download M3U
@@ -1642,11 +1645,12 @@ class MainWindow:
                         if self.manager.check_playlist(provider):
                             self.status(_("Loading channels..."), provider)
                             self.manager.load_channels(provider)
-                            if provider.name == self.settings.get_string("active-provider"):
-                                self.active_provider = provider
+                            self.active_provider = provider
                             self.status(None)
-                            print("%s: %d channels, %d groups, %d series, %d movies" % (provider.name, \
-                                len(provider.channels), len(provider.groups), len(provider.series), len(provider.movies)))
+                            print("%s: %d channels, %d groups, %d series, %d movies" % (
+                                provider.name,
+                                len(provider.channels), len(provider.groups),
+                                len(provider.series), len(provider.movies)))
                     else:
                         self.status(_("Failed to download playlist from %s") %  provider.name, provider)
 
@@ -1686,9 +1690,7 @@ class MainWindow:
                             GLib.source_remove(self._timerid)
                         self._timerid = GLib.timeout_add_seconds(self.reload_timeout_sec, self.force_reload)
 
-                        # If no errors, approve provider
-                        if provider.name == self.settings.get_string("active-provider"):
-                            self.active_provider = provider
+                        self.active_provider = provider
                         self.status(None)
                     else:
                         print("XTREAM Authentication Failed")
